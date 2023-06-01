@@ -1,0 +1,124 @@
+# Initialisation
+
+Préparation de tout ce qui est nécessaire au script
+
+!wget https://cdn.antho.cefim.o2switch.site/access.log
+
+# Script
+
+import re
+import json
+
+## Lire le fichier access.log
+
+with open("./access.log", "r") as access_file:
+  log_lines = access_file.readlines()
+  print(f"{len(log_lines)} ligne(s) dans access.log")
+
+## Extraire les informations
+
+all_data = {}
+
+regex_log = r"^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).+\" (\d{3}) \d+ "
+
+print(re.findall(regex_log, log_lines[123]))
+
+### Les adresse IP
+
+for line in log_lines:
+  ip_addr = re.findall(regex_log, line)[0][0]
+  all_data[ip_addr] = {}
+
+print(all_data)
+
+### Les codes retour
+
+for line in log_lines:
+  ip_addr, status = re.findall(regex_log, line)[0]
+  if status not in all_data[ip_addr]:
+    all_data[ip_addr][status] = 1
+  else:
+    all_data[ip_addr][status] += 1
+
+all_data
+
+## Sauvegarder les données en JSON
+
+with open("access.json", "w") as result_file:
+  json.dump(all_data, result_file)
+[ ]
+# Création d'un fichier pour la démonstration
+!echo "Contenu de mon fichier" > example_file.txt
+
+# Lecture du fichier
+with open("./example_file.txt", "r") as file_pointer:
+  content = file_pointer.read()
+  print(f"Le fichier continent le texte : {content}")
+Le fichier continent le texte : Contenu de mon fichier
+
+Vous pouvez également lire un fichier ligne à ligne avec la méthode readline ou même récupérer l'ensemble des lignes dans un tableau avec la méthode readlines.
+
+[ ]
+# Création d'un fichier pour la démonstration
+!echo -e "Un fichier\navec\ndes sauts\nde\nlignes !" > example_file.txt
+
+# Récupération d'un tableau de lignes
+with open("./example_file.txt", "r") as file_pointer:
+  lines = file_pointer.readlines()
+  print(lines)
+['Un fichier\n', 'avec\n', 'des sauts\n', 'de\n', 'lignes !\n']
+Extraire des éléments d'une chaine de caractère
+Pour extraire des données précises depuis une ligne donnée, vous pouvez utiliser le module re permettant l'utilisation de regex.
+
+[ ]
+import re
+
+chaine1 = "<Thomas> à rejoint le chat sur le canal #nico_le_chat"
+chaine2 = "<Antho> à rejoint le chat sur le canal #discussion_chiante_de_dev"
+regex = r"^<(\w+)> à rejoint le chat sur le canal #(\w+)$"
+
+print(re.findall(regex, chaine1))
+print(re.findall(regex, chaine2))
+[('Thomas', 'nico_le_chat')]
+[('Antho', 'discussion_chiante_de_dev')]
+Pour créer vos formats de regex plus simplement, allez faire un tour sur le site Regex101.
+
+Créer un fichier JSON
+Pour générer un fichier JSON à partir d'une variable, vous utiliserez le module json combiné avec la fonction open.
+
+[ ]
+import json
+
+# Donnée exemple
+data = {
+    "prenom": "Robert",
+    "nom": "Paulson",
+    "age": 48,
+    "adresse": {
+        "nb": 38,
+        "rue": "Rue Jules Charpentier",
+        "ville": "Tours",
+        "code_postal": 37000
+    }
+}
+
+with open("file.json", "w") as json_file_pointer:
+  json.dump(data, json_file_pointer)
+
+# Lecture du fichier pour la démonstration
+!cat file.json
+{"prenom": "Robert", "nom": "Paulson", "age": 48, "adresse": {"nb": 38, "rue": "Rue Jules Charpentier", "ville": "Tours", "code_postal": 37000}}
+Pour aller plus loin...
+Voici quelques éléments que vous pouvez implémenter pour pousser l'exercice un peu plus loin.
+
+Extraire d'autres informations depuis les logs
+Essayez maintenant d'extraire de nouvelles données depuis les log à intégrer dans votre fichier :
+
+Le nombre total de requêtes de chaque adresse IP
+La date de la première/dernière requête de chaque adresse IP
+La liste des navigateurs utilisés pour chaque adresse IP
+Utiliser une base de donnée
+Vous pouvez remplacer l'usage d'un fichier JSON par une base de donnée.
+
+Le plus simple pour commencer est d'utiliser le module sqlite et de créer une table pour référencer les données.
+
